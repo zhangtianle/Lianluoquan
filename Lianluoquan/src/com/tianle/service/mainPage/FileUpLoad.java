@@ -22,7 +22,7 @@ import com.tianle.model.base.Article;
 import com.tianle.model.base.Attachment;
 import com.tianle.service.article.PubArticle;
 import com.tianle.service.article.RecArticle;
-import com.tianle.service.attachment.CreatAttachment;
+import com.tianle.service.attachment.AttachmentService;
 
 /**
  * 
@@ -157,7 +157,7 @@ public class FileUpLoad extends HttpServlet {
 						recAttachment.setAttachURL(changeURL(attachURL));
 						recAttachment.setAttachName(filename);
 						recAttachment.setArticleUUID(articleUUID);
-						new CreatAttachment().addAttachment(recAttachment);
+						new AttachmentService().addAttachment(recAttachment);
 					}
 					path = staticPath;
 					in.close();

@@ -1,7 +1,5 @@
 package com.tianle.service.mainPage;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +11,9 @@ import com.tianle.model.base.Attachment;
 import com.tianle.model.base.User;
 import com.tianle.model.logic.LogicArticle;
 import com.tianle.model.logic.LogicComment;
+import com.tianle.model.logic.LogicMainPageArticle;
 import com.tianle.service.user.UserInf;
+import com.tianle.util.IpURL;
 import com.tianle.util.SqlHelper;
 
 public class MainPageService {
@@ -21,7 +21,7 @@ public class MainPageService {
 	Connection conn = null;
 	Statement st = null;
 	ResultSet rs = null;
-	
+
 	UserInf uInf = new UserInf();
 
 	// 根据用户的uuid查询该用户关注的联络圈
@@ -82,7 +82,7 @@ public class MainPageService {
 				String photourl = rs.getString("photourl");
 
 				// 转化图片以及时间格式
-				photourl = changeURL(photourl);
+				photourl = IpURL.changeURL(photourl);
 				time = changeTime(time);
 
 				art.setId(articleuuid);
@@ -111,19 +111,16 @@ public class MainPageService {
 		return articles;
 	}
 	
-	/**
-	 * 根据articleuui来获得对应文章的所有信息
-	 * @param articleUUID
-	 * @return
-	 */
-	public Article getArtcleforUUID(String articleUUID) {
-		Article art = new Article();
+	public ArrayList<Article> getArticleforUserUUID(String userUUID) {
+		ArrayList<Article> articles = new ArrayList<Article>();
 		conn = SqlHelper.getConnection();
 		try {
 			st = conn.createStatement();
-			String sql = "select * from article where articleuuid='" + articleUUID + "'";
+			String sql = "select * from article where useruuid='" + userUUID + "'order by time desc";
 			rs = st.executeQuery(sql);
 			while(rs.next()) {
+				Article art = new Article();
+
 				String articleuuid = rs.getString("articleuuid");
 				String useruuid = rs.getString("useruuid");
 				String circleuuid = rs.getString("circleuuid");
@@ -135,7 +132,60 @@ public class MainPageService {
 				String photourl = rs.getString("photourl");
 
 				// 转化图片以及时间格式
-				photourl = changeURL(photourl);
+				photourl = IpURL.changeURL(photourl);
+				time = changeTime(time);
+
+				art.setId(articleuuid);
+				art.setUserUUID(useruuid);
+				art.setCircleUUID(circleuuid);
+				art.setContent(content);
+				art.setTitle(title);
+				art.setTags(tags);
+				art.setTime(time);
+				art.setZanCount(zancount);
+				art.setPhotoURL(photourl);
+
+				articles.add(art);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		
+		return articles;
+	}
+
+	/**
+	 * 根据articleuui来获得对应文章的所有信息
+	 * 
+	 * @param articleUUID
+	 * @return
+	 */
+	public Article getArtcleforUUID(String articleUUID) {
+		Article art = new Article();
+		conn = SqlHelper.getConnection();
+		try {
+			st = conn.createStatement();
+			String sql = "select * from article where articleuuid='"
+					+ articleUUID + "'";
+			rs = st.executeQuery(sql);
+			while (rs.next()) {
+				String articleuuid = rs.getString("articleuuid");
+				String useruuid = rs.getString("useruuid");
+				String circleuuid = rs.getString("circleuuid");
+				String title = rs.getString("title");
+				String tags = rs.getString("tags");
+				String content = rs.getString("content");
+				String time = rs.getString("time");
+				int zancount = rs.getInt("zancount");
+				String photourl = rs.getString("photourl");
+
+				// 转化图片以及时间格式
+				photourl = IpURL.changeURL(photourl);
 				time = changeTime(time);
 
 				art.setId(articleuuid);
@@ -155,6 +205,76 @@ public class MainPageService {
 			close();
 		}
 		return art;
+	}
+
+	public ArrayList<LogicMainPageArticle> formatMainPageArticle(
+			ArrayList<Article> articles) {
+		ArrayList<LogicMainPageArticle> mArticles = new ArrayList<LogicMainPageArticle>();
+		conn = SqlHelper.getConnection();
+		try {
+			for (Article art : articles) {
+				LogicMainPageArticle lma = new LogicMainPageArticle();
+				String articleuuid = art.getId();
+				// 获得文章的作者
+				String useruuid = art.getUserUUID();
+				st = conn.createStatement();
+				String sql = "select name,userhead from user where useruuid = '"
+						+ useruuid + "' ";
+				rs = st.executeQuery(sql);
+				while (rs.next()) {
+					String name = rs.getString("name");
+					String userhead = rs.getString("userhead");
+					lma.setUserHead(userhead);
+					lma.setName(name);
+				}
+
+				// 获得圈子的名称
+				String circleuuid = art.getCircleUUID();
+				String sqlcir = "select circlename from circle where circleuuid = '"
+						+ circleuuid + "' ";
+				rs = st.executeQuery(sqlcir);
+				while (rs.next()) {
+					String circlename = rs.getString("circlename");
+					lma.setCircle(circlename);
+				}
+
+				lma.setTitle(art.getTitle());
+				lma.setTime(art.getTime());
+				lma.setId(art.getId());
+				lma.setContent(art.getContent());
+				lma.setZanCount(art.getZanCount());
+				lma.setPhotoURL(art.getPhotoURL());
+				lma.setType(art.getTags());
+
+				// 获得文章附件的数目
+				if (articleuuid != null) {
+					// st = conn.createStatement();
+					String sqlatt = "select count(*) from attachment where articleuuid = '"
+							+ articleuuid + "' ";
+					rs = st.executeQuery(sqlatt);
+					while (rs.next()) {
+						lma.setAttachments(rs.getInt(1));
+					}
+				}
+
+				// 获得文章评论的数目
+				if (articleuuid != null) {
+					String sqlcom = "select count(*) from comment where articleuuid = '"
+							+ articleuuid + "' ";
+					rs = st.executeQuery(sqlcom);
+					while (rs.next()) {
+						lma.setComments(rs.getInt(1));
+					}
+				}
+				mArticles.add(lma);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return mArticles;
 	}
 
 	// 将articles封装成需要的提交的数据格式对应的list
@@ -209,7 +329,7 @@ public class MainPageService {
 						Attachment attachment = new Attachment();
 						attachment.setId(rs.getString("attachuuid"));
 						attachment.setAttachName(rs.getString("attachname"));
-						attachment.setAttachURL(changeURL(rs
+						attachment.setAttachURL(IpURL.changeURL(rs
 								.getString("attachurl")));
 						attachment.setArticleUUID(rs.getString("articleuuid"));
 
@@ -222,14 +342,13 @@ public class MainPageService {
 				if (articleuuid != null) {
 					ArrayList<LogicComment> logiComments = new ArrayList<LogicComment>();
 					// st = conn.createStatement();
-					String sqlcomm = "select commentuuid,pubuseruuid,reuseruuid,content,layer from comment where articleuuid = '"
+					String sqlcomm = "select commentuuid,pubuseruuid,reuseruuid,content,layer,time from comment where articleuuid = '"
 							+ articleuuid + "' ";
 					rs = st.executeQuery(sqlcomm);
 					while (rs.next()) {
 						String pubUserUUID = rs.getString("pubuseruuid");
 						String reUserUUID = rs.getString("reuseruuid");
-						
-						
+
 						LogicComment logicComment = new LogicComment();
 						logicComment.setArticleUUID(articleuuid);
 						logicComment.setId(rs.getString("commentuuid"));
@@ -237,17 +356,18 @@ public class MainPageService {
 						logicComment.setReuserUUID(reUserUUID);
 						logicComment.setContent(rs.getString("content"));
 						logicComment.setLayer(rs.getInt("layer"));
-						
-						//根据用户uuid查找对应的用户信息
+						logicComment.setTime(rs.getString("time"));
+
+						// 根据用户uuid查找对应的用户信息
 						User pubUser = uInf.getUserInf(pubUserUUID);
 						User reUser = uInf.getUserInf(reUserUUID);
-						
+
 						logicComment.setPubUserName(pubUser.getName());
 						logicComment.setPubUserHead(pubUser.getUserHead());
-						
+
 						logicComment.setReUserName(reUser.getName());
 						logicComment.setReUserHead(reUser.getUserHead());
-						
+
 						logiComments.add(logicComment);
 					}
 					la.setComments(logiComments);
@@ -264,24 +384,6 @@ public class MainPageService {
 	}
 
 	
-
-	// 更改图片路径
-	private String changeURL(String url) {
-		String changed = "";
-		String ip = "";
-		if (url != null && !url.equals("null")) {
-			try {
-				ip = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			changed = "http://" + ip + "/Lianluoquan/" + url;
-		}
-		System.out.println("send URL: " + changed);
-
-		return changed;
-	}
 
 	/**
 	 * 将时间后面的点零去掉
@@ -317,5 +419,4 @@ public class MainPageService {
 		}
 	}
 
-	
 }

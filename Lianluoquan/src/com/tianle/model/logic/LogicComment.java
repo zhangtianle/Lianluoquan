@@ -7,7 +7,7 @@ public class LogicComment extends Comment {
 	private String pubUserHead;
 	private String reUserName;
 	private String reUserHead;
-
+	
 	public String getPubUserName() {
 		return pubUserName;
 	}

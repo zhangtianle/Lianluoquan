@@ -10,14 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import com.tianle.model.base.Article;
+import com.tianle.model.base.Attachment;
 import com.tianle.model.base.Comment;
-import com.tianle.model.logic.LogicArticle;
+import com.tianle.model.logic.LogicComment;
+import com.tianle.model.logic.LogicMainPageArticle;
 import com.tianle.service.article.PubArticle;
 import com.tianle.service.article.RecArticle;
 import com.tianle.service.article.ZanPlus;
-import com.tianle.service.comment.AddComment;
+import com.tianle.service.attachment.AttachmentService;
+import com.tianle.service.comment.CommentService;
 import com.tianle.service.mainPage.MainPageService;
 import com.tianle.service.organization.UseraddtoCircle;
 import com.tianle.service.register.RegisterService;
@@ -143,9 +147,9 @@ public class Register extends HttpServlet {
 					MainPageService mps = new MainPageService();
 					ArrayList<Article> articles = mps.mainPageResponse(
 							userUUID, page, circle, time);
-					ArrayList<LogicArticle> logicArticles = mps
-							.formatArticle(articles);
-					JSONArray jsonArray = JSONArray.fromObject(logicArticles);
+					ArrayList<LogicMainPageArticle> lmpas = mps
+							.formatMainPageArticle(articles);
+					JSONArray jsonArray = JSONArray.fromObject(lmpas);
 					String sArticles = "{\"logicArticles\":"
 							+ jsonArray.toString() + "}";
 					out.println(sArticles);
@@ -161,19 +165,25 @@ public class Register extends HttpServlet {
 				String zanId = request.getParameter("articleuuid");
 				ZanPlus zp = new ZanPlus();
 				int result = zp.addZan(zanId);
-				if(result > 0) {
+				if (result > 0) {
 					int count = zp.zanCount(zanId);
 					out.println(count);
 					out.close();
 				}
 			} else if (type.equals("comment")) {
 				String commentJSON = request.getParameter("comment");
-				AddComment ac = new AddComment();
+				System.out.println("接收到的评论： " + commentJSON);
+				CommentService ac = new CommentService();
 				Comment comment = ac.getComment(commentJSON);
-				String commentUUID = ac.addtoDataBase(comment);
-				if(!commentUUID.equals("")) {
-					System.out.println("评论成功，评论UUID为：   " + commentUUID);
-					out.println("Oh！！！评论成功啦！！");
+				comment = ac.addtoDataBase(comment);
+				LogicComment logicCommnet = ac.changeComment(comment);
+				JSONObject jsonObject = JSONObject.fromObject(logicCommnet);
+				if (jsonObject != null && !jsonObject.equals("")) {
+					System.out.println("评论成功，评论为：   " + jsonObject);
+					out.println(jsonObject);
+					out.close();
+				} else {
+					out.println("false");
 					out.close();
 				}
 			} else if (type.equals("addorg")) {
@@ -183,17 +193,58 @@ public class Register extends HttpServlet {
 				uatc.addCircle(userUUID, orgUUID);
 			} else if (type.equals("refresh")) {
 				String articleUUID = request.getParameter("articleUUID");
-				MainPageService mps = new MainPageService();
-				Article article = mps.getArtcleforUUID(articleUUID);
-				ArrayList<Article> articles = new ArrayList<Article>();
-				articles.add(article);
-				ArrayList<LogicArticle> logicArticles = mps.formatArticle(articles);
-				JSONArray jsonArray = JSONArray.fromObject(logicArticles);
-				String s = jsonArray.toString();
-				String sArticles = s.substring(1, s.length()-1);
-				out.println(sArticles);
-				System.out.println("点击查看文章详细内容： " + sArticles);
+				String time = request.getParameter("time");
+				CommentService cs = new CommentService();
+				AttachmentService as = new AttachmentService();
+				ArrayList<LogicComment> logiComments = cs.selcetComments(
+						articleUUID, time);
+				ArrayList<Attachment> attachments = as
+						.getAttachement(articleUUID);
+
+				JSONArray jsonAttachArray = JSONArray.fromObject(attachments);
+				JSONArray jsonCommentsArray = JSONArray
+						.fromObject(logiComments);
+
+				String slAttachments = "\"attachments\":"
+						+ jsonAttachArray.toString();
+				String slogiComments = "\"comments\":"
+						+ jsonCommentsArray.toString();
+
+				String sendOut = "{" + slogiComments + "," + slAttachments
+						+ "}";
+				out.println(sendOut);
+				System.out.println("发出去的东东评论加附件:" + sendOut);
 				out.close();
+
+				/*
+				 * MainPageService mps = new MainPageService(); Article article
+				 * = mps.getArtcleforUUID(articleUUID); ArrayList<Article>
+				 * articles = new ArrayList<Article>(); articles.add(article);
+				 * ArrayList<LogicArticle> logicArticles =
+				 * mps.formatArticle(articles); JSONArray jsonArray =
+				 * JSONArray.fromObject(logicArticles); String s =
+				 * jsonArray.toString(); String sArticles = s.substring(1,
+				 * s.length()-1); out.println(sArticles);
+				 * System.out.println("点击查看文章详细内容： " + sArticles); out.close();
+				 */
+			} else if (type.equals("myArticle")) {
+				String userUUID = request.getParameter("userUUID");
+				MainPageService mps = new MainPageService();
+				ArrayList<Article> articles = mps
+						.getArticleforUserUUID(userUUID);
+				if (articles.size() != 0) {
+					ArrayList<LogicMainPageArticle> lmpas = mps
+							.formatMainPageArticle(articles);
+					JSONArray jsonArray = JSONArray.fromObject(lmpas);
+					String sArticles = "{\"logicArticles\":"
+							+ jsonArray.toString() + "}";
+					out.println(sArticles);
+					System.out.println(sArticles);
+					out.close();
+				} else {
+					out.println("false");
+					out.close();
+				}
 			}
 		}
 	}

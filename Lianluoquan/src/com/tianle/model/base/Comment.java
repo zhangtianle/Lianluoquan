@@ -7,6 +7,7 @@ public class Comment {
 	private String pubuserUUID;
 	private String reuserUUID;
 	private String content;
+	private String time;
 	private int layer;
 
 	public String getId() {
@@ -48,6 +49,8 @@ public class Comment {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
+	
 
 	public int getLayer() {
 		return layer;
@@ -55,6 +58,14 @@ public class Comment {
 
 	public void setLayer(int layer) {
 		this.layer = layer;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
 	}
 
 }
