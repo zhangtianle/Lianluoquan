@@ -13,6 +13,7 @@ public class LogicUser {
 	private int grade;
 	private String userCollege;
 	private List<Circle> circles;
+	private List<LogicFriend> friends;
 
 	public String getId() {
 		return id;
@@ -76,6 +77,14 @@ public class LogicUser {
 
 	public void setCircles(List<Circle> circles) {
 		this.circles = circles;
+	}
+
+	public List<LogicFriend> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<LogicFriend> friends) {
+		this.friends = friends;
 	}
 	
 	

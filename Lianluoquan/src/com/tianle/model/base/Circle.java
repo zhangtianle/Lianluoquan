@@ -3,7 +3,8 @@ package com.tianle.model.base;
 public class Circle {
 	private String id;
 	private String circleName;
-	private String userUUID;
+	private String circleHead;
+//	private String userUUID;
 
 	public String getId() {
 		return id;
@@ -21,12 +22,22 @@ public class Circle {
 		this.circleName = circleName;
 	}
 
-	public String getUserUUID() {
+	public String getCircleHead() {
+		return circleHead;
+	}
+
+	public void setCircleHead(String circleHead) {
+		this.circleHead = circleHead;
+	}
+	
+	
+
+	/*public String getUserUUID() {
 		return userUUID;
 	}
 
 	public void setUserUUID(String userUUID) {
 		this.userUUID = userUUID;
-	}
+	}*/
 
 }

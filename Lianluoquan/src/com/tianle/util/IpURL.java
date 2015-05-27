@@ -11,10 +11,12 @@ public class IpURL {
 			if (url != null && !url.equals("null")) {
 				try {
 					ip = InetAddress.getLocalHost().getHostAddress();
+					
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				ip = "cqingkyle.java.jspee.net";
 				changed = "http://" + ip + "/Lianluoquan/" + url;
 			}
 			System.out.println("send URL: " + changed);

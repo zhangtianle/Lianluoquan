@@ -67,7 +67,7 @@ public class OrgService {
 			// 建立成功
 			if (result > 0) {
 				// 建立对应的圈子
-				if (creatCircleForOrg(orgUUID, orgName) > 0) {
+				if (creatCircleForOrg(UUID, orgName) > 0) {
 					orgUUID = UUID;
 				}
 			}
@@ -124,10 +124,10 @@ public class OrgService {
 	public int creatCircleForOrg(String orgUUID, String orgName) {
 		int result = 0;
 		conn = SqlHelper.getConnection();
-		String sql = "inser into circle value('" + orgUUID + "','" + orgName
-				+ "')";
+		String sql = "insert into circle (circleuuid,circlename)value('" + orgUUID + "','" + orgName	+ "')";
 		try {
 			st = conn.createStatement();
+			System.out.println(sql);
 			result = st.executeUpdate(sql);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -1,5 +1,5 @@
 <%@ page language="java"
-	import="java.util.*,com.tianle.service.*,com.tianle.model.base.*"
+	import="java.util.*,com.tianle.service.organization.*,com.tianle.model.base.*"
 	pageEncoding="utf-8"%>
 <%
 	String path = request.getContextPath();
@@ -129,7 +129,10 @@
 		</form>
 	</div>
 	<hr>
-
+	
+	<div class='addCircle'>
+	
+	</div>
 
 </body>
 </html>

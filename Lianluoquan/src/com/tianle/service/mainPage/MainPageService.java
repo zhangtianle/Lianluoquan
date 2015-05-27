@@ -24,7 +24,7 @@ public class MainPageService {
 
 	UserInf uInf = new UserInf();
 
-	// 根据用户的uuid查询该用户关注的联络圈
+	// 根据用户的uuid查询该用户关注的联络圈的所有消息
 	public ArrayList<Article> mainPageResponse(String userUUID, String page,
 			String circle, String loadTime) {
 		// 设置分页，默认每页5条数据
@@ -111,12 +111,18 @@ public class MainPageService {
 		return articles;
 	}
 	
+	/**
+	 * 查找该用户发表的文章
+	 * @param userUUID
+	 * @return
+	 */
 	public ArrayList<Article> getArticleforUserUUID(String userUUID) {
 		ArrayList<Article> articles = new ArrayList<Article>();
 		conn = SqlHelper.getConnection();
 		try {
 			st = conn.createStatement();
 			String sql = "select * from article where useruuid='" + userUUID + "'order by time desc";
+			System.out.println("getArticleforUserUUID: " + sql);
 			rs = st.executeQuery(sql);
 			while(rs.next()) {
 				Article art = new Article();
@@ -146,7 +152,6 @@ public class MainPageService {
 				art.setPhotoURL(photourl);
 
 				articles.add(art);
-				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -154,8 +159,6 @@ public class MainPageService {
 		} finally {
 			close();
 		}
-		
-		
 		return articles;
 	}
 
@@ -207,6 +210,11 @@ public class MainPageService {
 		return art;
 	}
 
+	/**
+	 * 将article转化成客户端所需求的article格式，加上附件和评论的数目
+	 * @param articles
+	 * @return
+	 */
 	public ArrayList<LogicMainPageArticle> formatMainPageArticle(
 			ArrayList<Article> articles) {
 		ArrayList<LogicMainPageArticle> mArticles = new ArrayList<LogicMainPageArticle>();
@@ -277,7 +285,11 @@ public class MainPageService {
 		return mArticles;
 	}
 
-	// 将articles封装成需要的提交的数据格式对应的list
+	/**
+	 * 将article转化成客户端所需求的article格式，加上所有的附件和评论内容
+	 * @param articles
+	 * @return
+	 */
 	public ArrayList<LogicArticle> formatArticle(ArrayList<Article> articles) {
 		ArrayList<LogicArticle> logicArticles = new ArrayList<LogicArticle>();
 

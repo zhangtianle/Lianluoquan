@@ -3,6 +3,7 @@ package com.tianle.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,17 +15,22 @@ import net.sf.json.JSONObject;
 
 import com.tianle.model.base.Article;
 import com.tianle.model.base.Attachment;
+import com.tianle.model.base.Circle;
 import com.tianle.model.base.Comment;
 import com.tianle.model.logic.LogicComment;
+import com.tianle.model.logic.LogicFriend;
 import com.tianle.model.logic.LogicMainPageArticle;
+import com.tianle.model.logic.LogicUser;
 import com.tianle.service.article.PubArticle;
 import com.tianle.service.article.RecArticle;
 import com.tianle.service.article.ZanPlus;
 import com.tianle.service.attachment.AttachmentService;
 import com.tianle.service.comment.CommentService;
+import com.tianle.service.friend.FriendService;
 import com.tianle.service.mainPage.MainPageService;
 import com.tianle.service.organization.UseraddtoCircle;
 import com.tianle.service.register.RegisterService;
+import com.tianle.service.search.SearchService;
 
 public class Register extends HttpServlet {
 
@@ -114,7 +120,7 @@ public class Register extends HttpServlet {
 					// 根据用户uuid返回用户详细信息
 					// String logicUser =
 					// rs.selcetStuInf(uuid).replaceAll("userUUID","id");
-					String logicUser = rs.selcetStuInf(uuid);
+					String logicUser = rs.logicUserJSON(rs.selcetStuInf(uuid));
 					// logicUser = "{\"users\": ["+logicUser+"]}";
 					System.out.println(logicUser);
 					out.println(logicUser);
@@ -132,7 +138,7 @@ public class Register extends HttpServlet {
 					// 根据用户uuid返回用户详细信息
 					// String logicUser =
 					// rs.selcetStuInf(uuid).replaceAll("userUUID","id");
-					String logicUser = rs.selcetStuInf(uuid);
+					String logicUser = rs.logicUserJSON(rs.selcetStuInf(uuid));
 					// logicUser = "{\"users\": ["+logicUser+"]}";
 					System.out.println(logicUser);
 					out.println(logicUser);
@@ -243,6 +249,49 @@ public class Register extends HttpServlet {
 					out.close();
 				} else {
 					out.println("false");
+					out.close();
+				}
+			} else if(type.equals("search")) {
+//				String userUUID = request.getParameter("userUUID");
+				String infor = request.getParameter("infor");
+				SearchService searchService = new SearchService();
+				List<Circle> circles = searchService.searchCircles(infor);
+				List<LogicUser> logicUsers = searchService.searchUsers(infor);
+				String resutl = searchService.searchMain(logicUsers, circles);
+				out.println(resutl);
+				System.out.println("搜索圈子和用户： " + resutl);
+				out.close();
+			} else if(type.equals("follow")) {
+				String userUUID = request.getParameter("userUUID");
+				String followType = request.getParameter("followType");
+				String followUUID = request.getParameter("followUUID");
+				if(followType.equals("circle")) {
+					SearchService searchService = new SearchService();
+					Circle circle = searchService.followCircle(userUUID, followUUID);
+					String scircle = "";
+					if(circle != null) {
+						scircle = searchService.circletoJSON(circle);
+					} else {
+						scircle = "false";
+					}
+					out.println(scircle);
+					System.out.println("关注的圈子： " + scircle);
+					out.close();
+				} else if (followType.equals("user")) {
+					FriendService fs = new FriendService();
+					String sLogicFriend = "";
+					if(!fs.isFollowed(userUUID, followUUID)) {
+						LogicFriend logicFriend = fs.followFriend(userUUID, followUUID);
+						sLogicFriend = fs.friendtoJson(logicFriend);
+					} else {
+						sLogicFriend = "false";
+					}
+					out.println(sLogicFriend);
+					System.out.println("关注的好友： " + sLogicFriend);
+					out.close();
+				} else {
+					out.println("发送的请求参数有误");
+					System.out.println("发送的请求参数有误");
 					out.close();
 				}
 			}

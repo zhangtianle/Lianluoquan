@@ -5,11 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.json.JSONObject;
 
 import com.tianle.model.base.Circle;
+import com.tianle.model.logic.LogicFriend;
 import com.tianle.model.logic.LogicUser;
+import com.tianle.service.friend.FriendService;
 import com.tianle.util.SqlHelper;
 import com.tianle.util.UUIDGenerator;
 
@@ -20,12 +23,11 @@ public class RegisterService {
 	ResultSet rs = null;
 
 	/**
-	 * 
+	 * 根据用户的id查找学生信息logicUser，返回logicUser
 	 * @param id
 	 * @return
 	 */
-	public String selcetStuInf(String id) {
-		String userJSON = "";
+	public LogicUser selcetStuInf(String id) {
 		LogicUser logicUser = new LogicUser();
 
 		String classuuid = "";
@@ -96,6 +98,8 @@ public class RegisterService {
 			close();
 		}
 		
+		// 获得用户的关注用户的列表
+		List<LogicFriend> friends = new FriendService().selectFriends(id);
 
 		// 将学生信息重新打包
 		logicUser.setName(name);
@@ -106,7 +110,18 @@ public class RegisterService {
 		logicUser.setId(id);
 		logicUser.setPassWord(passWord);
 		logicUser.setCircles(circles);
+		logicUser.setFriends(friends);
 
+		return logicUser;
+	}
+	
+	/**
+	 * 将logicUser转化为json
+	 * @param logicUser
+	 * @return
+	 */
+	public String logicUserJSON(LogicUser logicUser) {
+		String userJSON = "";
 		JSONObject jsonObject = JSONObject.fromObject(logicUser);
 		userJSON = jsonObject.toString();
 		return userJSON;
@@ -230,7 +245,7 @@ public class RegisterService {
 		try {
 			st = conn.createStatement();
 			int result = st.executeUpdate(sql);
-			if (result == 1) {
+			if (result != 0) {
 				classUUID = UUID;
 			}
 		} catch (SQLException e) {
@@ -256,7 +271,7 @@ public class RegisterService {
 				flag = 1;
 			}
 			if(flag == 0) {
-				String addClasstoCircleSQL = "insert into circle value('" + classUUID + "','" + className + "')";
+				String addClasstoCircleSQL = "insert into circle (circleuuid,circlename) value('" + classUUID + "','" + className + "')";
 				if(st.executeUpdate(addClasstoCircleSQL) == 1) {
 					System.out.println("添加班级至圈子成功： " + className);
 				}
@@ -282,7 +297,7 @@ public class RegisterService {
 				flag = 1;
 			}
 			if(flag == 0) {
-				String addCollegetoCircleSQL = "insert into circle value('" + collegeUUID + "','" + college + "')";
+				String addCollegetoCircleSQL = "insert into circle (circleuuid,circlename) value('" + collegeUUID + "','" + college + "')";
 				if(st.executeUpdate(addCollegetoCircleSQL) == 1) {
 					System.out.println("添加学院至圈子成功： " + college);
 				}
