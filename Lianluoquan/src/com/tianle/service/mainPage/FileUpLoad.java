@@ -25,16 +25,16 @@ import com.tianle.service.article.RecArticle;
 import com.tianle.service.attachment.AttachmentService;
 
 /**
+ * Administrator 文件上传 具体步骤： 1）获得磁盘文件条目工厂 DiskFileItemFactory 要导包 2） 利用 request
+ * 获取 真实路径 ，供临时文件存储，和 最终文件存储 ，这两个存储位置可不同，也可相同 3）对 DiskFileItemFactory 对象设置一些 属性
+ * 4）高水平的API文件上传处理 ServletFileUpload upload = new ServletFileUpload(factory);
+ * 目的是调用 parseRequest（request）方法 获得 FileItem 集合list ，
  * 
- * @author Administrator 文件上传 具体步骤： 1）获得磁盘文件条目工厂 DiskFileItemFactory 要导包 2） 利用
- *         request 获取 真实路径 ，供临时文件存储，和 最终文件存储 ，这两个存储位置可不同，也可相同 3）对
- *         DiskFileItemFactory 对象设置一些 属性 4）高水平的API文件上传处理 ServletFileUpload
- *         upload = new ServletFileUpload(factory); 目的是调用
- *         parseRequest（request）方法 获得 FileItem 集合list ，
+ * 5）在 FileItem 对象中 获取信息， 遍历， 判断 表单提交过来的信息 是否是 普通文本信息 另做处理 6） 第一种. 用第三方 提供的
+ * item.write( new File(path,filename) ); 直接写到磁盘上 第二种. 手动处理 Comments:
  * 
- *         5）在 FileItem 对象中 获取信息， 遍历， 判断 表单提交过来的信息 是否是 普通文本信息 另做处理 6） 第一种. 用第三方
- *         提供的 item.write( new File(path,filename) ); 直接写到磁盘上 第二种. 手动处理
- * 
+ * @author Kyle
+ * @date 2015年6月7日 下午3:50:43
  */
 public class FileUpLoad extends HttpServlet {
 	Article recArticle = new Article();
@@ -44,7 +44,10 @@ public class FileUpLoad extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	/**
+	 * 文章上传
+	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -177,6 +180,11 @@ public class FileUpLoad extends HttpServlet {
 
 	}
 
+	/**
+	 * 将数据库存储的url，客户端所要求的格式
+	 * @param url
+	 * @return
+	 */
 	private String changeURL(String url) {
 		String[] sss = url.split(",");
 		String newString = "";

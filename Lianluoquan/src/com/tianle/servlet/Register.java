@@ -107,8 +107,6 @@ public class Register extends HttpServlet {
 		RegisterService rs = new RegisterService();
 		if (type != null) {
 			if (type.equals("register")) {
-				// String reregisertinfor =
-				// request.getParameter("registerInfor").replaceAll("id","userUUID");
 				String reregisertinfor = request.getParameter("registerInfor");
 				System.out.println(reregisertinfor);
 				// 调用方法注册用户，包含（姓名，密码，学号，学院，班级）

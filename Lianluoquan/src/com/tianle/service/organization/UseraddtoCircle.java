@@ -5,6 +5,12 @@ import java.util.List;
 
 import com.tianle.model.base.Org;
 
+/**
+ * 用户加入圈子类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午4:01:22
+ */
 public class UseraddtoCircle {
 
 

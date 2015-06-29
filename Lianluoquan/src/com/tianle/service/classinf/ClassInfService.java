@@ -7,7 +7,12 @@ import java.sql.Statement;
 
 import com.tianle.model.base.ClassInf;
 import com.tianle.util.SqlHelper;
-
+/**
+ * 班级信息处理服务类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午3:39:13
+ */
 public class ClassInfService {
 	
 	Connection conn = null;
@@ -16,8 +21,8 @@ public class ClassInfService {
 	
 	/**
 	 * 根据班级uuid查找该班的信息
-	 * @param classUUID
-	 * @return
+	 * @param classUUID 班级的uuid
+	 * @return 根据uuid查找出来的班级详细信息，返回ClassInf
 	 */
 	public ClassInf getClassInfforClassUUID(String classUUID) {
 		ClassInf c = new ClassInf();

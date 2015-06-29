@@ -11,7 +11,7 @@ import com.tianle.model.base.Org;
 import com.tianle.util.SqlHelper;
 
 /**
- * 
+ * 将组织对应至圈子
  * Comments:
  * @author Kyle
  * @date 2015年5月2日 下午6:44:10
@@ -53,7 +53,13 @@ public class OrgtoCircle {
 		return orgs;
 	}
 	
-//	static ArrayList<Org> sons = new ArrayList<Org>();
+	/**
+	 * 递归来查找他的下级组织
+	 * @param o
+	 * @param all
+	 * @param sons
+	 * @return
+	 */
 	public ArrayList<Org> getChild(Org o, List<Org> all, ArrayList<Org> sons) {
 		for(Org oo : all) {
 			if(o.getOrgUUID().equals(oo.getFatherUUID())) {

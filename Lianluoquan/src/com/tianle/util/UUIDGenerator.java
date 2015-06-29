@@ -4,7 +4,18 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+/**
+ * UUID生成器
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午4:13:43
+ */
 public class UUIDGenerator {
+	
+	/**
+	 * 生成UUID
+	 * @return 返回UUID
+	 */
 	public static String getUUID() {  
         UUID uuid = UUID.randomUUID();  
         String str = uuid.toString();  

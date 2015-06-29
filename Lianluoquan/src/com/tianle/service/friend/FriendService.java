@@ -16,6 +16,12 @@ import com.tianle.service.classinf.ClassInfService;
 import com.tianle.util.SqlHelper;
 import com.tianle.util.UUIDGenerator;
 
+/**
+ * 用户好友处理服务类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午3:49:44
+ */
 public class FriendService {
 	
 	Connection conn = null;

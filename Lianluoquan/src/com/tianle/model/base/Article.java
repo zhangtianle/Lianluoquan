@@ -1,5 +1,10 @@
 package com.tianle.model.base;
-
+/**
+ * 文章类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午3:25:13
+ */
 public class Article {
 	private String id;
 	private String userUUID;

@@ -30,7 +30,7 @@ public class CommentService {
 	/**
 	 * 将json转化为评论
 	 * 
-	 * @param commentJSON
+	 * @param commentJSON 评论的json String
 	 * @return
 	 */
 	public Comment getComment(String commentJSON) {
@@ -44,7 +44,7 @@ public class CommentService {
 	/**
 	 * 将获得到的comment存入数据库中
 	 * 
-	 * @param comment
+	 * @param comment 评论类
 	 * @return
 	 */
 	public Comment addtoDataBase(Comment comment) {
@@ -89,6 +89,12 @@ public class CommentService {
 		return comment;
 	}
 	
+	/**
+	 * 根据文章的uuid和，时间进行查找文章列表
+	 * @param articleUUID 文章uuid
+	 * @param time 在此时间之后发表的文章
+	 * @return 查找所得的文章ArrayList<LogicComment>
+	 */
 	public ArrayList<LogicComment> selcetComments(String articleUUID, String time) {
 		ArrayList<LogicComment> logiComments = new ArrayList<LogicComment>();
 		
@@ -138,9 +144,9 @@ public class CommentService {
 	}
 
 	/**
-	 * 将comment
-	 * @param commnet
-	 * @return
+	 * 将comment添加用户信息转化为LogicComment
+	 * @param commnet 需要转化的comment
+	 * @return 转换好的LogicComment
 	 */
 	public LogicComment changeComment(Comment commnet) {
 		LogicComment lc = new LogicComment();
@@ -167,7 +173,9 @@ public class CommentService {
 		return lc;
 	}
 	
-	
+	/**
+	 * 关闭数据库连接
+	 */
 	private void close() {
 		try {
 			if (rs != null) {

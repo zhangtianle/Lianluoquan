@@ -14,11 +14,15 @@ import java.util.Properties;
 import org.junit.Test;
 
 /**
- *
+ * 数据连接获取
  * @author Administrator
  */
 public class SqlHelper {
-
+	
+	/**
+	 * 获得数据库连接，从文件中获取配置信息
+	 * @return 数据库连接Connection
+	 */
     public static Connection getConnection() {
         Connection conn = null;
         Properties prop = new Properties();

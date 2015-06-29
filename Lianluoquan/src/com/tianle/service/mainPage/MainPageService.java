@@ -16,6 +16,12 @@ import com.tianle.service.user.UserInf;
 import com.tianle.util.IpURL;
 import com.tianle.util.SqlHelper;
 
+/**
+ * 客户端首页数据处理类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午3:52:59
+ */
 public class MainPageService {
 
 	Connection conn = null;
@@ -24,7 +30,15 @@ public class MainPageService {
 
 	UserInf uInf = new UserInf();
 
-	// 根据用户的uuid查询该用户关注的联络圈的所有消息
+	
+	/**
+	 * 根据用户的uuid查询该用户关注的联络圈的所有消息
+	 * @param userUUID 用户uuid
+	 * @param page 分页查询，当前页数，若为all，则返回全部信息
+	 * @param circle 查询指定圈子的文章，若为all，则返回该用户关注所有圈子的文章
+	 * @param loadTime 最后加载时间，返回改时间之后的所有文章
+	 * @return 所查询的文章列表ArrayList<Article>
+	 */
 	public ArrayList<Article> mainPageResponse(String userUUID, String page,
 			String circle, String loadTime) {
 		// 设置分页，默认每页5条数据
@@ -113,8 +127,8 @@ public class MainPageService {
 	
 	/**
 	 * 查找该用户发表的文章
-	 * @param userUUID
-	 * @return
+	 * @param userUUID 用户uuid
+	 * @return 该用户发表的所有文章列表ArrayList<Article>
 	 */
 	public ArrayList<Article> getArticleforUserUUID(String userUUID) {
 		ArrayList<Article> articles = new ArrayList<Article>();
@@ -165,8 +179,8 @@ public class MainPageService {
 	/**
 	 * 根据articleuui来获得对应文章的所有信息
 	 * 
-	 * @param articleUUID
-	 * @return
+	 * @param articleUUID 文章uuid
+	 * @return 文章信息Article
 	 */
 	public Article getArtcleforUUID(String articleUUID) {
 		Article art = new Article();
@@ -212,8 +226,8 @@ public class MainPageService {
 
 	/**
 	 * 将article转化成客户端所需求的article格式，加上附件和评论的数目
-	 * @param articles
-	 * @return
+	 * @param articles 所要转化的原始文章Article
+	 * @return 按照要求转化好的文章ArrayList<LogicMainPageArticle>
 	 */
 	public ArrayList<LogicMainPageArticle> formatMainPageArticle(
 			ArrayList<Article> articles) {
@@ -287,8 +301,8 @@ public class MainPageService {
 
 	/**
 	 * 将article转化成客户端所需求的article格式，加上所有的附件和评论内容
-	 * @param articles
-	 * @return
+	 * @param articles 所要转的文章
+	 * @return 转化好的文章
 	 */
 	public ArrayList<LogicArticle> formatArticle(ArrayList<Article> articles) {
 		ArrayList<LogicArticle> logicArticles = new ArrayList<LogicArticle>();
@@ -398,10 +412,10 @@ public class MainPageService {
 	
 
 	/**
-	 * 将时间后面的点零去掉
+	 * 将时间后面的点零去掉（由于在读取时间的时候，时间后面有个.0）
 	 * 
-	 * @param time
-	 * @return
+	 * @param time 所要转化的时间
+	 * @return 转化完成的时间
 	 */
 	private String changeTime(String time) {
 		String changedTime = "";
@@ -410,7 +424,9 @@ public class MainPageService {
 		return changedTime;
 	}
 
-	// 关闭连接
+	/**
+	 * 关闭数据库连接
+	 */
 	private void close() {
 		try {
 			if (rs != null) {

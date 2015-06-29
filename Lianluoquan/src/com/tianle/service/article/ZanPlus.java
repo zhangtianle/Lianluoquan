@@ -7,12 +7,23 @@ import java.sql.Statement;
 
 import com.tianle.util.SqlHelper;
 
+/**
+ * 文章点赞
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午3:29:25
+ */
 public class ZanPlus {
 
 	Connection conn = null;
 	Statement st = null;
 	ResultSet rs = null;
 
+	/**
+	 * 根据文章的UUID进行点赞，被点赞的文章，点赞数加一
+	 * @param articleUUID 文章的UUID
+	 * @return 成功返回1
+	 */
 	public int addZan(String articleUUID) {
 		int result = 0;
 		conn = SqlHelper.getConnection();
@@ -30,6 +41,11 @@ public class ZanPlus {
 		return result;
 	}
 
+	/**
+	 * 返回文章的点赞数目，根据文章的uuid来进行查找
+	 * @param articleUUID
+	 * @return 该文章的点赞数
+	 */
 	public int zanCount(String articleUUID) {
 		int count = 0;
 		conn = SqlHelper.getConnection();
@@ -50,6 +66,9 @@ public class ZanPlus {
 		return count;
 	}
 
+	/**
+	 * 关闭数据库连接
+	 */
 	private void close() {
 		try {
 			if (rs != null) {

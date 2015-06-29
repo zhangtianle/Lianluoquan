@@ -11,6 +11,11 @@ import com.tianle.model.base.Article;
  * @date 2015年5月1日 下午5:58:24
  */
 public class RecArticle {
+	/**
+	 * 将json字符串转化成文章类
+	 * @param json 文章的json String
+	 * @return Article类
+	 */
 	public Article getArt(String json) {
 		JSONObject jsonObject = JSONObject.fromObject(json);
 		Article article = (Article) JSONObject

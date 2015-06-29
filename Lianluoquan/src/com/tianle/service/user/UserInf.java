@@ -8,6 +8,12 @@ import java.sql.Statement;
 import com.tianle.model.base.User;
 import com.tianle.util.SqlHelper;
 
+/**
+ * 用户信息处理类
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午4:11:48
+ */
 public class UserInf {
 	Connection conn = null;
 	Statement st = null;
@@ -15,7 +21,7 @@ public class UserInf {
 	
 	/**
 	 * 根据用户id查找用户信息
-	 * @param userUUID
+	 * @param userUUID 用户uuid
 	 * @return
 	 */
 	public User getUserInf(String userUUID) {
@@ -39,7 +45,9 @@ public class UserInf {
 		return u;
 	}
 	
-	// 关闭连接
+	/**
+	 * 关闭数据库连接
+	 */
 	private void close() {
 		try {
 			if (rs != null) {

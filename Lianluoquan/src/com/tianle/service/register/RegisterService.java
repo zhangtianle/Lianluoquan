@@ -16,6 +16,12 @@ import com.tianle.service.friend.FriendService;
 import com.tianle.util.SqlHelper;
 import com.tianle.util.UUIDGenerator;
 
+/**
+ * 用户注册管理
+ * Comments:
+ * @author Kyle
+ * @date 2015年6月7日 下午4:04:32
+ */
 public class RegisterService {
 
 	Connection conn = null;
@@ -24,8 +30,8 @@ public class RegisterService {
 
 	/**
 	 * 根据用户的id查找学生信息logicUser，返回logicUser
-	 * @param id
-	 * @return
+	 * @param id 学生id
+	 * @return 学生的详细信息
 	 */
 	public LogicUser selcetStuInf(String id) {
 		LogicUser logicUser = new LogicUser();
@@ -117,7 +123,7 @@ public class RegisterService {
 	
 	/**
 	 * 将logicUser转化为json
-	 * @param logicUser
+	 * @param logicUser 需要转化的LogicUser类
 	 * @return
 	 */
 	public String logicUserJSON(LogicUser logicUser) {
@@ -227,7 +233,14 @@ public class RegisterService {
 
 		return userUUID;
 	}
-
+	
+	/**
+	 * 添加新班级
+	 * @param grade 年级
+	 * @param college 学院
+	 * @param className 班级代号如：0141201
+	 * @return
+	 */
 	public String addClass(String grade, String college, String className) {
 		String UUID = UUIDGenerator.getUUID();
 		String classUUID = "";
@@ -256,6 +269,12 @@ public class RegisterService {
 		return classUUID;
 	}
 	
+	/**
+	 * 将班级加入与班级同名的圈子中
+	 * @param useruuid 用户的uuid
+	 * @param college 学院（相同的圈子名）
+	 * @param className 班级代号（相同的圈子名）
+	 */
 	private void adduc(String useruuid, String college, String className) {
 		String classUUID = UUIDGenerator.getUUID();
 		conn = SqlHelper.getConnection();
@@ -315,6 +334,11 @@ public class RegisterService {
 		addtouc(useruuid,collegeUUID);
 	}
 	
+	/**
+	 * 将学生信息添加至圈子学生对应关系表
+	 * @param useruuid 
+	 * @param circleuuid
+	 */
 	private void addtouc(String useruuid, String circleuuid) {
 		String UUID = UUIDGenerator.getUUID();
 		conn = SqlHelper.getConnection();
@@ -331,6 +355,9 @@ public class RegisterService {
 		}
 	}
 	
+	/**
+	 * 关闭数据库连接
+	 */
 	private void closeRs() {
 		try {
 			if(rs != null) {
@@ -343,6 +370,9 @@ public class RegisterService {
 		}
 	}
 
+	/**
+	 * 关闭数据库连接
+	 */
 	private void close() {
 		try {
 			if (st != null) {
