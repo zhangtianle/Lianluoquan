@@ -1,0 +1,16 @@
+com.tianle.model.base
+com.tianle.model.logic
+com.tianle.service
+com.tianle.service.article
+com.tianle.service.attachment
+com.tianle.service.circle
+com.tianle.service.classinf
+com.tianle.service.comment
+com.tianle.service.friend
+com.tianle.service.mainPage
+com.tianle.service.organization
+com.tianle.service.register
+com.tianle.service.search
+com.tianle.service.user
+com.tianle.servlet
+com.tianle.util
